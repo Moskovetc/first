@@ -25,10 +25,6 @@ string convertDifficultyToString(unsigned short difficulty)
     }
 };
 
-// const string GAME_TITLE = "The Game";
-const difficulty DEFAULT_GAME_DIFFICULTY = NORMAL;
-const bool DEFAULT_INIT_CONFIG_PRINT_ENABLED = true;
-vector<difficulty> AVAILABLE_GAME_DIFFICULTIES = {EASY, NORMAL, HARD};
 
 /*Init game configuration
  *
@@ -36,10 +32,11 @@ vector<difficulty> AVAILABLE_GAME_DIFFICULTIES = {EASY, NORMAL, HARD};
 class Config
 {
 private:
-    string gameTitle;
-    uint maxScore;
-    difficulty gameDifficulty;
-    bool printConfigEnabled;
+    string m_gameTitle = Config::DEFAULT_GAME_TITLE;
+    uint m_maxScore = Config::DEFAULT_MAX_SCORE;
+    difficulty m_gameDifficulty = Config::DEFAULT_GAME_DIFFICULTY;
+    vector<difficulty> m_availableDifficulties = Config::AVAILABLE_GAME_DIFFICULTIES;
+    bool m_printConfigEnabled = Config::DEFAULT_INIT_CONFIG_PRINT_ENABLED;
 
     void printUnsupportedConfigAndExit(unsigned short gameDifficulty)
     {
@@ -59,12 +56,18 @@ private:
 public:
     static const string DEFAULT_GAME_TITLE;
     static const uint DEFAULT_MAX_SCORE;
+    static const difficulty DEFAULT_GAME_DIFFICULTY;
+    static const bool DEFAULT_INIT_CONFIG_PRINT_ENABLED;
+    static const vector<difficulty> AVAILABLE_GAME_DIFFICULTIES;
+
     ~Config();
 
     const string& getGameTitle() const;
     void setGameTitle(const string& title);
-
+    uint getMaxScore();
+    void setMaxScore(uint maxScore);
     difficulty getGameDifficulty() const;
+    vector<difficulty> getAvailableDifficulties();
     void setGameDifficulty(difficulty gameDifficulty);
     void setGameDifficulty(unsigned short gameDifficulty);
     bool isPrintConfigEnabled();
@@ -75,36 +78,53 @@ Config::~Config()
 {
 }
 
-inline const string& Config::getGameTitle() const {
-    return gameTitle;
-};
-
-inline void Config::setGameTitle(const string& title) {
-    this->gameTitle = title;
-};
-
-inline difficulty Config::getGameDifficulty() const
+const string& Config::getGameTitle() const
 {
-    return gameDifficulty;
+    return m_gameTitle;
 };
 
-inline void Config::setGameDifficulty(difficulty gameDifficulty)
+void Config::setGameTitle(const string& title)
 {
-    this->gameDifficulty = gameDifficulty;
+    this->m_gameTitle = title;
 };
 
-inline void Config::setGameDifficulty(unsigned short gameDifficulty)
+uint Config::getMaxScore() {
+    return m_maxScore;
+}
+
+void Config::setMaxScore(uint maxScore)
+{
+    m_maxScore = maxScore;
+}
+
+difficulty Config::getGameDifficulty() const
+{
+    return m_gameDifficulty;
+}
+
+vector<difficulty> Config::getAvailableDifficulties()
+{
+    return m_availableDifficulties;
+}
+;
+
+void Config::setGameDifficulty(difficulty gameDifficulty)
+{
+    this->m_gameDifficulty = gameDifficulty;
+};
+
+void Config::setGameDifficulty(unsigned short gameDifficulty)
 {
     switch (static_cast<difficulty>(gameDifficulty))
     {
     case EASY:
-        this->gameDifficulty = static_cast<difficulty>(gameDifficulty);
+        this->m_gameDifficulty = static_cast<difficulty>(gameDifficulty);
         break;
     case NORMAL:
-        this->gameDifficulty = static_cast<difficulty>(gameDifficulty);
+        this->m_gameDifficulty = static_cast<difficulty>(gameDifficulty);
         break;
     case HARD:
-        this->gameDifficulty = static_cast<difficulty>(gameDifficulty);
+        this->m_gameDifficulty = static_cast<difficulty>(gameDifficulty);
         break;
     default:
         printUnsupportedConfigAndExit(gameDifficulty);
@@ -112,22 +132,25 @@ inline void Config::setGameDifficulty(unsigned short gameDifficulty)
     }
 };
 
-inline bool Config::isPrintConfigEnabled()
+bool Config::isPrintConfigEnabled()
 {
-    return printConfigEnabled;
+    return m_printConfigEnabled;
 }
 
-inline void Config::toString()
+void Config::toString()
 {
     cout << "====================================" << endl;
     cout << "Init game configuration:" << endl;
-    cout << "Game difficulty:" << convertDifficultyToString(this->gameDifficulty) << endl;
+    cout << "Game difficulty:" << convertDifficultyToString(this->m_gameDifficulty) << endl;
     cout << "====================================" << endl;
     cout << endl;
 }
 
 const string Config::DEFAULT_GAME_TITLE = "The Game";
 const uint Config::DEFAULT_MAX_SCORE = 100;
+const difficulty Config::DEFAULT_GAME_DIFFICULTY = NORMAL;
+const bool Config::DEFAULT_INIT_CONFIG_PRINT_ENABLED = true;
+const vector<difficulty> Config::AVAILABLE_GAME_DIFFICULTIES = { EASY, NORMAL, HARD };
 
 void askQuitGame();
 string convertDifficultyToString(difficulty difficulty);
@@ -137,15 +160,12 @@ int main()
     typedef unsigned int uint;
 
     Config config;
-    // TODO: to config
-    const uint MAX_SCORE = 100;
 
     /*main menu*/
-    cout << "welcome to the '" + Config::DEFAULT_GAME_TITLE + "'" << endl;
-    cout << endl
-         << endl;
+    cout << "welcome to the '" + config.getGameTitle() + "'" << endl;
+    cout << endl << endl;
     cout << "Difficulties: " << endl;
-    for (vector<difficulty>::iterator iter = AVAILABLE_GAME_DIFFICULTIES.begin(); iter != AVAILABLE_GAME_DIFFICULTIES.end(); ++iter)
+    for (vector<difficulty>::iterator iter = config.getAvailableDifficulties().begin(); iter != config.getAvailableDifficulties().end(); ++iter)
     {
         cout << static_cast<unsigned short>(*iter) << ") " << convertDifficultyToString(static_cast<unsigned short>(*iter)) << endl;
     }
