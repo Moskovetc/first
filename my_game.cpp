@@ -64,7 +64,7 @@ public:
 
     const string& getGameTitle() const;
     void setGameTitle(const string& title);
-    uint getMaxScore();
+    uint getMaxScore() const;
     void setMaxScore(uint maxScore);
     difficulty getGameDifficulty() const;
     vector<difficulty> getAvailableDifficulties();
@@ -88,7 +88,8 @@ void Config::setGameTitle(const string& title)
     this->m_gameTitle = title;
 };
 
-uint Config::getMaxScore() {
+uint Config::getMaxScore() const
+{
     return m_maxScore;
 }
 
@@ -165,6 +166,7 @@ int main()
     cout << "welcome to the '" + config.getGameTitle() + "'" << endl;
     cout << endl << endl;
     cout << "Difficulties: " << endl;
+    // BUG: баг с цказателем на константу
     for (vector<difficulty>::iterator iter = config.getAvailableDifficulties().begin(); iter != config.getAvailableDifficulties().end(); ++iter)
     {
         cout << static_cast<unsigned short>(*iter) << ") " << convertDifficultyToString(static_cast<unsigned short>(*iter)) << endl;
